@@ -40,11 +40,11 @@ public class Device {
             throw new DeviceInUseException("Cannot update name or brand: device is currently in use.");
         }
 
-        if (name != null && !name.isEmpty()) {
+        if (name != null && !name.isBlank()) {
             this.name = name;
         }
 
-        if (brand != null && !brand.isEmpty()) {
+        if (brand != null && !brand.isBlank()) {
             this.brand = brand;
         }
 
