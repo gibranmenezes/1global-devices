@@ -7,10 +7,9 @@ import java.util.List;
 
 public interface DeviceRepository {
 
-    Device save(String name, String brand, String state);
+    Device save(Device device);
     Device findById(Long id);
     List<Device> findAll(String brand, State state);
-    Device update(Long id, String name, String brand, State state);
-    Device patchDevice(Long id, String name, String brand, State state);
+    void update(Long id, Device device);
     void delete(Long id);
 }
