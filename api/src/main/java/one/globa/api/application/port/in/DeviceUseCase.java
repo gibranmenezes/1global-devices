@@ -6,7 +6,7 @@ import one.globa.api.domain.model.Device;
 import java.util.List;
 
 public interface DeviceUseCase {
-    Device createDevice(String name, String brand, String state);
+    Device createDevice(String name, String brand);
 
     Device getDeviceById(Long id);
 
