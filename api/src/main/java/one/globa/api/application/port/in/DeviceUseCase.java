@@ -12,9 +12,9 @@ public interface DeviceUseCase {
 
     List<Device> getAllDevices(String brand, State state);
 
-    Device updateDevice(Long id, String name, String brand, State state);
+    void updateDevice(Long id, String name, String brand, State state);
 
-    Device partiallyUpdateDevice(Long id, String name, String brand, State state);
+    void partiallyUpdateDevice(Long id, String name, String brand, State state);
 
     void deleteDevice(Long id);
 }
