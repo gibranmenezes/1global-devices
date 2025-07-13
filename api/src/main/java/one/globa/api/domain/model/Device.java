@@ -13,19 +13,11 @@ public class Device {
     private State state;
     private final LocalDateTime createdAt;
 
-    public Device(String name, String brand, State state) {
+    public Device(String name, String brand) {
         if (name != null && !name.isBlank()) this.name = name;
         if (brand != null && !brand.isBlank()) this.brand = brand;
         this.state = State.AVAILABLE;
         this.createdAt = LocalDateTime.now();
-    }
-
-    protected Device(Long id, String name, String brand, State state, LocalDateTime createdAt) {
-        this.id = id;
-        this.name = name;
-        this.brand = brand;
-        this.state = state;
-        this.createdAt = createdAt;
     }
 
     public void changeState(State newState) {
@@ -39,6 +31,8 @@ public class Device {
         if (this.state == State.IN_USE ) {
             throw new DeviceInUseException("Cannot update name or brand: device is currently in use.");
         }
+
+        //We could implement a validation over the sequence of State changes.
 
         if (name != null && !name.isBlank()) {
             this.name = name;
@@ -56,7 +50,7 @@ public class Device {
         }
     }
 
-    protected void setId(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -75,6 +69,7 @@ public class Device {
     public State getState() {
         return state;
     }
+
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
