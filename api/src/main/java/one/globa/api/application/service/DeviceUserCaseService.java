@@ -18,6 +18,7 @@ public class DeviceUserCaseService implements DeviceUseCase {
 
     @Override
     public Device createDevice(String name, String brand) {
+
         Device device = new Device(name, brand);
         return deviceRepository.save(device);
     }
