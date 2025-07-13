@@ -32,7 +32,7 @@ class DeviceTest {
         assertEquals("Device1", device.getName());
         assertEquals("BrandA", device.getBrand());
         assertEquals(State.AVAILABLE, device.getState());
-        assertNotNull(device.getCreatedAt());
+        assertNotNull(device.getCreationDate());
     }
 
 
@@ -107,17 +107,19 @@ class DeviceTest {
         @Test
         @DisplayName("Deve lançar exceção ao tentar excluir um dispositivo em uso")
         void ensureCanBeDeleted_ShouldThrowException_WhenDeviceIsInUse() {
-           getInUseDevice();
+           var newDevice = getInUseDevice();
 
-            assertThatThrownBy(device::ensureCanBeDeleted)
+            assertThatThrownBy(newDevice::ensureCanBeDeleted)
                     .isInstanceOf(DeviceInUseException.class)
                     .hasMessage("Cannot delete device: it is currently in use.");
         }
     }
 
 
-    private void getInUseDevice() {
-        this.device.changeState(State.IN_USE);
+    private Device getInUseDevice() {
+        var newDevice = this.device;
+        newDevice.changeState(State.IN_USE);
+        return newDevice;
     }
 
 
