@@ -17,9 +17,7 @@ import java.util.stream.Collectors;
 public class DeviceRespositoryAdapter implements DeviceRepository {
 
     private final JpaDeviceRepository jpaDeviceRepository;
-
-    @Autowired
-    private DeviceMapper deviceMapper;
+    private final DeviceMapper deviceMapper;
 
     @Override
     public Device save(Device device) {
@@ -31,8 +29,7 @@ public class DeviceRespositoryAdapter implements DeviceRepository {
     @Override
     public Device findById(Long id) {
         var optionalEntity = jpaDeviceRepository.findById(id);
-        return optionalEntity.map(jpaDeviceEntity ->
-                deviceMapper.fromJpaDeviceEntityToDevice(jpaDeviceEntity)).orElse(null);
+        return optionalEntity.map(deviceMapper::fromJpaDeviceEntityToDevice).orElse(null);
     }
 
     @Override

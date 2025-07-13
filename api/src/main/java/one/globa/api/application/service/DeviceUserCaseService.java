@@ -29,8 +29,8 @@ public class DeviceUserCaseService implements DeviceUseCase {
             throw new RuntimeException(String.format("Device with id %s not found", id));
         }
         return device;
-    }
 
+    }
     @Override
     public List<Device> getAllDevices(String brand, State state) {
         return List.of();
