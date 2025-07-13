@@ -21,6 +21,6 @@ public class JpaDeviceEntity {
     private Long id;
     private String name;
     private String brand;
-    private State state;
+    private String state;
     private LocalDateTime createdAt;
 }
