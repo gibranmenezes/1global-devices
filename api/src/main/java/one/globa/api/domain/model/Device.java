@@ -11,13 +11,13 @@ public class Device {
     private String name;
     private String brand;
     private State state;
-    private final LocalDateTime createdAt;
+    private final LocalDateTime creationDate;
 
     public Device(String name, String brand) {
         if (name != null && !name.isBlank()) this.name = name;
         if (brand != null && !brand.isBlank()) this.brand = brand;
         this.state = State.AVAILABLE;
-        this.createdAt = LocalDateTime.now();
+        this.creationDate = LocalDateTime.now();
     }
 
     public void changeState(State newState) {
@@ -71,8 +71,8 @@ public class Device {
     }
 
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public LocalDateTime getCreationDate() {
+        return creationDate;
     }
 
     @Override
