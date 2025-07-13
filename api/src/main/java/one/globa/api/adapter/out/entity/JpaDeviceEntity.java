@@ -1,14 +1,12 @@
 package one.globa.api.adapter.out.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "device")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
@@ -21,5 +19,6 @@ public class JpaDeviceEntity {
     private String name;
     private String brand;
     private String state;
-    private LocalDateTime createdAt;
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
 }
