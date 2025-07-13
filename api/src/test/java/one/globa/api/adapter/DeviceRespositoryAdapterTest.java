@@ -13,8 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -61,7 +62,47 @@ class DeviceRespositoryAdapterTest {
         assertEquals(expectedDevice.getName(), result.getName());
         assertEquals(expectedDevice.getBrand(), result.getBrand());
         assertEquals(expectedDevice.getState(), result.getState());
-        assertEquals(expectedDevice.getCreatedAt(), result.getCreatedAt());
+        assertEquals(expectedDevice.getCreationDate(), result.getCreationDate());
+
+    }
+
+    @Test
+    @DisplayName("Should successfully find a device by ID and return it")
+    void findById_ShouldReturnDevice_WhenFound() {
+        var mappedEntity = getMappedEntity(device);
+        var foundJpaEntity = getSavedEntity(mappedEntity);
+        var expectedDevice = getSavedDevice();
+        Long deviceId = 1L;
+
+        when(jpaDeviceRepository.findById(deviceId)).thenReturn(Optional.of(foundJpaEntity));
+
+        when(deviceMapper.fromJpaDeviceEntityToDevice(foundJpaEntity)).thenReturn(expectedDevice);
+
+        Device result = deviceRespositoryAdapter.findById(deviceId);
+
+        assertNotNull(result);
+        assertEquals(expectedDevice.getId(), result.getId());
+        assertEquals(expectedDevice.getName(), result.getName());
+        assertEquals(expectedDevice.getBrand(), result.getBrand());
+        assertEquals(expectedDevice.getState(), result.getState());
+        assertEquals(expectedDevice.getCreationDate(), result.getCreationDate());
+
+        verify(jpaDeviceRepository).findById(deviceId);
+        verify(deviceMapper).fromJpaDeviceEntityToDevice(foundJpaEntity);
+    }
+
+    @Test
+    @DisplayName("Should return null when device is not found by ID")
+    void findById_ShouldReturnNull_WhenNotFound() {
+        Long nonExistentId = 999L;
+
+        when(jpaDeviceRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+
+        Device result = deviceRespositoryAdapter.findById(nonExistentId);
+
+        assertNull(result);
+
+        verify(jpaDeviceRepository).findById(nonExistentId);
 
     }
 
@@ -70,7 +111,7 @@ class DeviceRespositoryAdapterTest {
         entity.setName(device.getName());
         entity.setBrand(device.getBrand());
         entity.setState(device.getState().getValue());
-        entity.setCreatedAt(device.getCreatedAt());
+        entity.setCreationDate(device.getCreationDate());
         return entity;
     }
 
