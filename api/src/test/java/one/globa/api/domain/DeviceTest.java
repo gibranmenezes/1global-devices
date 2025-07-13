@@ -20,13 +20,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(MockitoExtension.class)
 class DeviceTest {
 
-    private DeviceMapper deviceMapper;
     private Device device;
 
     @BeforeEach
     void setUp() {
         this.device = new Device("Device1", "BrandA");
-        this.deviceMapper = Mappers.getMapper(DeviceMapper.class);
     }
 
     @Test
