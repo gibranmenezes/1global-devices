@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: api
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/global_db
+    username: postgres
+    password: admin
+
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    show-sql: true
+server:
+  servlet:
+    context-path: /global-api
