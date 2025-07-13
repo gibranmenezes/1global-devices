@@ -1,6 +1,5 @@
 package one.globa.api.domain;
 
-import one.globa.api.adapter.out.DeviceMapper;
 import one.globa.api.domain.enums.State;
 import one.globa.api.domain.exception.DeviceInUseException;
 import one.globa.api.domain.model.Device;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
