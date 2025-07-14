@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import one.global.api.adapter.out.DeviceMapper;
 import one.global.api.adapter.out.entity.JpaDeviceEntity;
 import one.global.api.application.port.out.DeviceRepository;
+import one.global.api.domain.Utils.Utils;
 import one.global.api.domain.enums.State;
 import one.global.api.domain.model.Device;
 import one.global.api.presentation.dto.PaginatedResponse;
@@ -37,7 +38,7 @@ public class DeviceRespositoryAdapter implements DeviceRepository {
     @Override
     public PaginatedResponse<Device> findAll(String brand, State state, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        String stateName = state != null ? state.name() : null;
+        String stateName = Utils.getNameFromState(state);
 
         Page<JpaDeviceEntity> jpaPage = jpaDeviceRepository.findAllByBrandOrState(brand, stateName, pageable);
 
