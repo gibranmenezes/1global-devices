@@ -2,15 +2,14 @@ package one.globa.api.application.port.in;
 
 import one.globa.api.domain.enums.State;
 import one.globa.api.domain.model.Device;
-
-import java.util.List;
+import one.globa.api.presentation.dto.PaginatedResponse;
 
 public interface DeviceUseCase {
-    Device createDevice(String name, String brand);
+    Device registerDevice(String name, String brand);
 
     Device getDeviceById(Long id);
 
-    List<Device> getAllDevices(String brand, State state);
+    PaginatedResponse<Device> getAllDevices(String brand, State state, int page, int size);
 
     void updateDevice(Long id, String name, String brand, State state);
 
