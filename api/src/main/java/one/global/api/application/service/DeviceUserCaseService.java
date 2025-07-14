@@ -3,7 +3,9 @@ package one.global.api.application.service;
 import one.global.api.application.port.in.DeviceUseCase;
 import one.global.api.application.port.out.DeviceRepository;
 import one.global.api.application.validation.registration.DeviceRegistrationValidator;
+import one.global.api.domain.Utils.Utils;
 import one.global.api.domain.enums.State;
+import one.global.api.domain.exception.DeviceNotFoundException;
 import one.global.api.domain.model.Device;
 import one.global.api.presentation.dto.PaginatedResponse;
 
@@ -31,7 +33,7 @@ public class DeviceUserCaseService implements DeviceUseCase {
     public Device getDeviceById(Long id) {
         Device device = deviceRepository.findById(id);
         if (device == null) {
-            throw new RuntimeException(String.format("Device with id %s not found", id));
+            throw new DeviceNotFoundException(String.format("Device with id %s not found", id));
         }
         return device;
 
@@ -43,16 +45,36 @@ public class DeviceUserCaseService implements DeviceUseCase {
 
     @Override
     public void updateDevice(Long id, String name, String brand, State state) {
-
+        Device device = getDeviceById(id);
+        device.changeState(state);
+        device.updateDetails(name, brand);
+        deviceRepository.save(device);
     }
 
     @Override
     public void partiallyUpdateDevice(Long id, String name, String brand, State state) {
+        Device device = getDeviceById(id);
+
+        State currentState = device.getState();
+
+        if (Utils.isUpdatingNameAndBrand(name, brand)) {
+            device.updateDetails(name, brand);
+        }
+
+        if (state != null && state != currentState) {
+            device.changeState(state);
+        }
+
+        deviceRepository.save(device);
 
     }
 
     @Override
     public void deleteDevice(Long id) {
+        Device device = getDeviceById(id);
+        device.ensureCanBeDeleted();
+        deviceRepository.delete(id);
 
     }
+
 }
