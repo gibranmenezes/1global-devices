@@ -38,7 +38,7 @@ public class Device {
             this.name = name;
         }
 
-        if (brand != null && !brand.isBlank()) {
+        if (brand != null && !brand.isEmpty()) {
             this.brand = brand;
         }
 
