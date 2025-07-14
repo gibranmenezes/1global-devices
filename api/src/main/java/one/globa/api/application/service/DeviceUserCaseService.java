@@ -2,23 +2,27 @@ package one.globa.api.application.service;
 
 import one.globa.api.application.port.in.DeviceUseCase;
 import one.globa.api.application.port.out.DeviceRepository;
+import one.globa.api.application.validation.registration.DeviceRegistrationValidator;
 import one.globa.api.domain.enums.State;
 import one.globa.api.domain.model.Device;
+import one.globa.api.presentation.dto.PaginatedResponse;
 
 import java.util.List;
 
 public class DeviceUserCaseService implements DeviceUseCase {
 
     private final DeviceRepository deviceRepository;
+    private final List<DeviceRegistrationValidator> createValidators;
 
-    public DeviceUserCaseService(DeviceRepository deviceRepository) {
+    public DeviceUserCaseService(DeviceRepository deviceRepository, List<DeviceRegistrationValidator> createValidators) {
         this.deviceRepository = deviceRepository;
+        this.createValidators = createValidators;
     }
 
 
     @Override
-    public Device createDevice(String name, String brand) {
-
+    public Device registerDevice(String name, String brand) {
+        createValidators.forEach(v -> v.validate(name, brand));
         Device device = new Device(name, brand);
         return deviceRepository.save(device);
     }
@@ -33,8 +37,8 @@ public class DeviceUserCaseService implements DeviceUseCase {
 
     }
     @Override
-    public List<Device> getAllDevices(String brand, State state) {
-        return List.of();
+    public PaginatedResponse<Device> getAllDevices(String brand, State state, int page, int size) {
+        return deviceRepository.findAll(brand, state, page, size);
     }
 
     @Override
