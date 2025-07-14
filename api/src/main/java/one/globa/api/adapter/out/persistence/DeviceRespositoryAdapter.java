@@ -6,7 +6,10 @@ import one.globa.api.adapter.out.entity.JpaDeviceEntity;
 import one.globa.api.application.port.out.DeviceRepository;
 import one.globa.api.domain.enums.State;
 import one.globa.api.domain.model.Device;
-import org.springframework.beans.factory.annotation.Autowired;
+import one.globa.api.presentation.dto.PaginatedResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,8 +36,17 @@ public class DeviceRespositoryAdapter implements DeviceRepository {
     }
 
     @Override
-    public List<Device> findAll(String brand, State state) {
-        return  null;
+    public PaginatedResponse<Device> findAll(String brand, State state, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        String stateName = state != null ? state.name() : null;
+
+        Page<JpaDeviceEntity> jpaPage = jpaDeviceRepository.findAllByBrandOrState(brand, stateName, pageable);
+
+        List<Device> devices = jpaPage.getContent().stream()
+                .map(deviceMapper::fromJpaDeviceEntityToDevice).toList();
+
+        return  new PaginatedResponse<>(devices, jpaPage.getNumber(), jpaPage.getSize(),
+                jpaPage.getTotalElements(), jpaPage.getTotalPages());
     }
 
     @Override
@@ -46,4 +58,5 @@ public class DeviceRespositoryAdapter implements DeviceRepository {
     public void delete(Long id) {
 
     }
+
 }
