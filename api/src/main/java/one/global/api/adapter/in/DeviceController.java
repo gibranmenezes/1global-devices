@@ -1,5 +1,6 @@
 package one.global.api.adapter.in;
 
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import one.global.api.adapter.out.DeviceMapper;
 import one.global.api.application.port.in.DeviceUseCase;
@@ -27,6 +28,13 @@ public class DeviceController {
         return AppResponse
                 .ok("Device registered successfully", deviceMapper.fromDeviceToDeviceResponseDTO(device))
                 .getResponseEntity();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AppResponse<List<DeviceResponseDTO>>> getDevice(@PathVariable Long id) {
+        Device device = deviceUseCase.getDeviceById(id);
+        DeviceResponseDTO deviceResponseDTO = deviceMapper.fromDeviceToDeviceResponseDTO(device);
+        return AppResponse.ok("Device retrieved successfully", List.of(deviceResponseDTO)).getResponseEntity();
     }
 
     @GetMapping
