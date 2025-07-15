@@ -73,6 +73,15 @@ public class DeviceController {
 
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<AppResponse<DeviceResponseDTO>> partiallyUpdateDevice(@PathVariable Long id,
+                                                                                 @RequestBody DeviceUpdateDTO patchDTO) {
+        var validState = Utils.getValidState(patchDTO.state());
 
+        Device updatedDevice = deviceUseCase.partiallyUpdateDevice(id, patchDTO.name(), patchDTO.brand(), validState);
+        DeviceResponseDTO deviceResponseDTO = deviceMapper.fromDeviceToDeviceResponseDTO(updatedDevice);
+
+        return AppResponse.ok("Device partially updated successfully", deviceResponseDTO).getResponseEntity();
+    }
 
 }
