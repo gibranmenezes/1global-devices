@@ -20,6 +20,18 @@ public class Device {
         this.creationDate = LocalDateTime.now();
     }
 
+    private Device(Long id, String name, String brand, State state, LocalDateTime creationDate) {
+        this.id = id;
+        this.name = name;
+        this.brand = brand;
+        this.state = state;
+        this.creationDate = creationDate;
+    }
+
+    public static Device reconstruct(Long id, String name, String brand, String state, LocalDateTime creationDate) {
+        return new Device(id, name, brand, State.valueOf(state), creationDate);
+    }
+
     public void changeState(State newState) {
         if (newState == null) {
             throw new DeviceInUseException("State cannot be null");
@@ -34,7 +46,7 @@ public class Device {
 
         //We could implement a validation over the sequence of State changes.
 
-        if (name != null && !name.isBlank()) {
+        if (name != null && !name.isEmpty()) {
             this.name = name;
         }
 
