@@ -2,6 +2,7 @@ package one.global.api.domain.model;
 
 import one.global.api.domain.enums.State;
 import one.global.api.domain.exception.DeviceInUseException;
+import one.global.api.domain.exception.InvalidDeviceParameter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -33,8 +34,9 @@ public class Device {
     }
 
     public void changeState(State newState) {
+        //We could implement a validation over the sequence of State changes.
         if (newState == null) {
-            throw new DeviceInUseException("State cannot be null");
+            throw new InvalidDeviceParameter("State cannot be null");
         }
         this.state = newState;
     }
@@ -43,8 +45,6 @@ public class Device {
         if (this.state == State.IN_USE ) {
             throw new DeviceInUseException("Cannot update name or brand: device is currently in use.");
         }
-
-        //We could implement a validation over the sequence of State changes.
 
         if (name != null && !name.isEmpty()) {
             this.name = name;
