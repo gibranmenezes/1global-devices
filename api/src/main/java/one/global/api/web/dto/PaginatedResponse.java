@@ -1,4 +1,4 @@
-package one.global.api.presentation.dto;
+package one.global.api.web.dto;
 
 import java.util.List;
 
