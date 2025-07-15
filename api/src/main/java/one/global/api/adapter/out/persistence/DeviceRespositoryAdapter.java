@@ -4,10 +4,11 @@ import lombok.RequiredArgsConstructor;
 import one.global.api.adapter.out.DeviceMapper;
 import one.global.api.adapter.out.entity.JpaDeviceEntity;
 import one.global.api.application.port.out.DeviceRepository;
-import one.global.api.domain.Utils.Utils;
+import one.global.api.Utils.Utils;
 import one.global.api.domain.enums.State;
+import one.global.api.domain.exception.DeviceNotFoundException;
 import one.global.api.domain.model.Device;
-import one.global.api.presentation.dto.PaginatedResponse;
+import one.global.api.web.dto.PaginatedResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -50,13 +51,10 @@ public class DeviceRespositoryAdapter implements DeviceRepository {
     }
 
     @Override
-    public void update(Long id, Device device) {
-
-
-    }
-    @Override
     public void delete(Long id) {
+        JpaDeviceEntity entity = jpaDeviceRepository.findById(id)
+                .orElseThrow(() -> new DeviceNotFoundException("Device not found with id: " + id));
+        jpaDeviceRepository.delete(entity);
 
     }
-
 }
