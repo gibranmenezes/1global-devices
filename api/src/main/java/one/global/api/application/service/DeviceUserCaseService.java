@@ -3,11 +3,11 @@ package one.global.api.application.service;
 import one.global.api.application.port.in.DeviceUseCase;
 import one.global.api.application.port.out.DeviceRepository;
 import one.global.api.application.validation.registration.DeviceRegistrationValidator;
-import one.global.api.domain.Utils.Utils;
+import one.global.api.Utils.Utils;
 import one.global.api.domain.enums.State;
 import one.global.api.domain.exception.DeviceNotFoundException;
 import one.global.api.domain.model.Device;
-import one.global.api.presentation.dto.PaginatedResponse;
+import one.global.api.web.dto.PaginatedResponse;
 
 import java.util.List;
 
@@ -44,15 +44,15 @@ public class DeviceUserCaseService implements DeviceUseCase {
     }
 
     @Override
-    public void updateDevice(Long id, String name, String brand, State state) {
+    public Device updateDevice(Long id, String name, String brand, State state) {
         Device device = getDeviceById(id);
-        device.changeState(state);
         device.updateDetails(name, brand);
-        deviceRepository.save(device);
+        device.changeState(state);
+        return deviceRepository.save(device);
     }
 
     @Override
-    public void partiallyUpdateDevice(Long id, String name, String brand, State state) {
+    public Device partiallyUpdateDevice(Long id, String name, String brand, State state) {
         Device device = getDeviceById(id);
 
         State currentState = device.getState();
@@ -65,7 +65,7 @@ public class DeviceUserCaseService implements DeviceUseCase {
             device.changeState(state);
         }
 
-        deviceRepository.save(device);
+       return deviceRepository.save(device);
 
     }
 
