@@ -82,7 +82,8 @@ public class AppResponse<T> {
     @JsonIgnore
     public ResponseEntity<AppResponse<T>> getResponseEntity() {
         if (this.isValid()) {
-            if (ObjectUtils.isEmpty(this.getContent())) {
+            if (ObjectUtils.isEmpty(this.getContent()) &&
+                    this.status != HttpStatus.OK.value()) {
                 this.status = 204;
             }
         } else {
@@ -91,10 +92,6 @@ public class AppResponse<T> {
             }
         }
         return ResponseEntity.status(this.status).body(this);
-    }
-
-    public ResponseEntity<AppResponse<Void>> getNoContentResponseEntity() {
-        return ResponseEntity.status(this.status).build();
     }
 
     @JsonIgnore
@@ -116,8 +113,8 @@ public class AppResponse<T> {
         return new AppResponse<>(HttpStatus.CREATED.value(), true, message, content, null, null);
     }
 
-    public static <T> AppResponse<T> noContent(String message) {
-        return new AppResponse<>(HttpStatus.NO_CONTENT.value(), true, message, null,null, null);
+    public static <T> AppResponse<T> deleted(String message) {
+        return new AppResponse<>(HttpStatus.OK.value(), true, message, null,null, null);
     }
 
     public static <T> AppResponse<T> invalid(String message, HttpStatus httpStatus, String errorCode,
