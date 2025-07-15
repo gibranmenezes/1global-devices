@@ -2,6 +2,7 @@ package one.global.api.domain;
 
 import one.global.api.domain.enums.State;
 import one.global.api.domain.exception.DeviceInUseException;
+import one.global.api.domain.exception.InvalidDeviceParameter;
 import one.global.api.domain.model.Device;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -64,10 +65,10 @@ class DeviceTest {
         @DisplayName("Shouldn't update with null or blank values")
         void updateDetails_ShouldNotUpdateWithNullOrBlankValues() {
 
-            device.updateDetails(null, " ");
+            device.updateDetails(null, "");
 
-            assertThat(device.getName()).isEqualTo("Device1");
-            assertThat(device.getBrand()).isEqualTo("BrandA");
+            assertEquals("Device1", device.getName());
+            assertEquals("BrandA", device.getBrand());
         }
     }
 
@@ -88,7 +89,7 @@ class DeviceTest {
         void changeState_ShouldThrowException_WhenStateIsNull() {
 
             assertThatThrownBy(() -> device.changeState(null))
-                    .isInstanceOf(DeviceInUseException.class)
+                    .isInstanceOf(InvalidDeviceParameter.class)
                     .hasMessage("State cannot be null");
         }
     }

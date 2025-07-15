@@ -2,6 +2,7 @@ package one.global.api.service;
 
 import one.global.api.application.validation.registration.NameBrandValidation;
 import one.global.api.domain.exception.CreateDeviceException;
+import one.global.api.domain.exception.InvalidDeviceParameter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -171,7 +172,7 @@ class DeviceUseCaseServiceTest {
         State nullState = null;
         when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
 
-        assertThrows(DeviceInUseException.class, () -> deviceUserCaseService.updateDevice(id, newName, newBrand, nullState));
+        assertThrows(InvalidDeviceParameter.class, () -> deviceUserCaseService.updateDevice(id, newName, newBrand, nullState));
         verify(deviceRepository, never()).save(any(Device.class));
     }
 
