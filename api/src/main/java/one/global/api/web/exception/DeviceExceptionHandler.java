@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import one.global.api.domain.exception.CreateDeviceException;
 import one.global.api.domain.exception.DeviceInUseException;
 import one.global.api.domain.exception.DeviceNotFoundException;
+import one.global.api.domain.exception.InvalidDeviceParameter;
 import one.global.api.web.dto.AppErrorResponse;
 import one.global.api.web.dto.AppResponse;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -72,6 +73,20 @@ public class DeviceExceptionHandler {
                 .build();
 
         log.warn("Error - verify parameter values: {}", ex.getMessage());
+        return AppResponse.invalid("Error - verify parameter values", HttpStatus.BAD_REQUEST,
+                Collections.singletonList(error)).getResponseEntity();
+    }
+
+    @ExceptionHandler(InvalidDeviceParameter.class)
+    public ResponseEntity<AppResponse<Object>> handleCreateDeviceException(
+            InvalidDeviceParameter ex, WebRequest request) {
+        AppErrorResponse error = AppErrorResponse.builder()
+                .code("INVALID_PARAMETER_ERROR")
+                .description(ex.getMessage())
+                .traceId(getTraceId())
+                .build();
+
+        log.warn("Error - verify parameter: {}", ex.getMessage());
         return AppResponse.invalid("Error - verify parameter values", HttpStatus.BAD_REQUEST,
                 Collections.singletonList(error)).getResponseEntity();
     }
