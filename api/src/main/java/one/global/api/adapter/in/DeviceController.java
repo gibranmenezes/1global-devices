@@ -19,8 +19,8 @@ public class DeviceController {
     private final DeviceMapper deviceMapper;
 
     @PostMapping("/register")
-    public ResponseEntity<AppResponse<DeviceResponseDTO>> registerDevice(@RequestBody DeviceRequestDTO deviceRequestDTO) {
-        var device = deviceUseCase.registerDevice(deviceRequestDTO.name(), deviceRequestDTO.brand());
+    public ResponseEntity<AppResponse<DeviceResponseDTO>> createDevice(@RequestBody DeviceRequestDTO deviceRequestDTO) {
+        var device = deviceUseCase.createDevice(deviceRequestDTO.name(), deviceRequestDTO.brand());
         return AppResponse
                 .created("Device registered successfully", deviceMapper.fromDeviceToDeviceResponseDTO(device))
                 .getResponseEntity();
@@ -82,6 +82,13 @@ public class DeviceController {
         DeviceResponseDTO deviceResponseDTO = deviceMapper.fromDeviceToDeviceResponseDTO(updatedDevice);
 
         return AppResponse.ok("Device partially updated successfully", deviceResponseDTO).getResponseEntity();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<AppResponse<Void>> deleteDevice(@PathVariable Long id) {
+        deviceUseCase.deleteDevice(id);
+
+        return AppResponse.noContent("Device deleted successfully").getNoContentResponseEntity();
     }
 
 }

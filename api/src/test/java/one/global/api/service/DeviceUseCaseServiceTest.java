@@ -52,7 +52,7 @@ class DeviceUseCaseServiceTest {
 
     @Test
     @DisplayName("Register device should save new device")
-    void registerDevice_shouldSaveNewDevice() {
+    void createDevice_shouldSaveNewDevice() {
         String name = "NewDevice";
         String brand = "NewBrand";
         Device newDevice = new Device(name, brand);
@@ -60,7 +60,7 @@ class DeviceUseCaseServiceTest {
 
         when(deviceRepository.save(any(Device.class))).thenReturn(newDevice);
 
-        Device result = deviceUserCaseService.registerDevice(name, brand);
+        Device result = deviceUserCaseService.createDevice(name, brand);
 
         assertNotNull(result.getId());
         assertEquals(name, result.getName());

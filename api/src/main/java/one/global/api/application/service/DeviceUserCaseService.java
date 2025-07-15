@@ -21,9 +21,9 @@ public class DeviceUserCaseService implements DeviceUseCase {
         this.createValidators = createValidators;
     }
 
-
     @Override
-    public Device registerDevice(String name, String brand) {
+    public Device createDevice(String name, String brand) {
+        //here we could validate is the device already exists. In this case, we should implement a more specific equal and hashCode methods in the Device class.
         createValidators.forEach(v -> v.validate(name, brand));
         Device device = new Device(name, brand);
         return deviceRepository.save(device);

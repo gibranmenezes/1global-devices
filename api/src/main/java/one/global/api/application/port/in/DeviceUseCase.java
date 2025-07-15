@@ -5,7 +5,7 @@ import one.global.api.domain.model.Device;
 import one.global.api.web.dto.PaginatedResponse;
 
 public interface DeviceUseCase {
-    Device registerDevice(String name, String brand);
+    Device createDevice(String name, String brand);
 
     Device getDeviceById(Long id);
 
