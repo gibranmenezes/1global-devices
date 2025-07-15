@@ -1,15 +1,11 @@
 package one.global.api.adapter.in;
 
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
+import one.global.api.Utils.Utils;
 import one.global.api.adapter.out.DeviceMapper;
 import one.global.api.application.port.in.DeviceUseCase;
-import one.global.api.domain.enums.State;
 import one.global.api.domain.model.Device;
-import one.global.api.presentation.dto.AppResponse;
-import one.global.api.presentation.dto.DeviceRequestDTO;
-import one.global.api.presentation.dto.DeviceResponseDTO;
-import one.global.api.presentation.dto.PaginatedResponse;
+import one.global.api.web.dto.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +22,7 @@ public class DeviceController {
     public ResponseEntity<AppResponse<DeviceResponseDTO>> registerDevice(@RequestBody DeviceRequestDTO deviceRequestDTO) {
         var device = deviceUseCase.registerDevice(deviceRequestDTO.name(), deviceRequestDTO.brand());
         return AppResponse
-                .ok("Device registered successfully", deviceMapper.fromDeviceToDeviceResponseDTO(device))
+                .created("Device registered successfully", deviceMapper.fromDeviceToDeviceResponseDTO(device))
                 .getResponseEntity();
     }
 
@@ -44,7 +40,7 @@ public class DeviceController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size)  {
 
-        var validState = state != null && !state.isBlank() ? State.valueOf(state) : null;
+        var validState = Utils.getValidState(state);
 
         PaginatedResponse<Device> paginatedDevices = deviceUseCase
                 .getAllDevices(brand, validState, page, size);
@@ -64,5 +60,19 @@ public class DeviceController {
         return finalAppResponse.getResponseEntity();
 
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<AppResponse<DeviceResponseDTO>> updateDevice(@PathVariable Long id,
+                                                                       @RequestBody DeviceUpdateDTO updateDTO) {
+
+        var validState = Utils.getValidState(updateDTO.state());
+
+        Device updatedDevice = deviceUseCase.updateDevice(id, updateDTO.name(), updateDTO.brand(), validState);
+        DeviceResponseDTO deviceResponseDTO = deviceMapper.fromDeviceToDeviceResponseDTO(updatedDevice);
+
+       return AppResponse.ok("Device updated successfully", deviceResponseDTO).getResponseEntity();
+
+    }
+
+
 
 }
