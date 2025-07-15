@@ -43,8 +43,8 @@ public class DeviceExceptionHandler {
                 .traceId(getTraceId())
                 .build();
 
-        log.warn("Dispositivo não encontrado: {}", ex.getMessage());
-        return AppResponse.invalid("Dispositivo não encontrado", HttpStatus.NOT_FOUND,
+        log.warn("Device not found: {}", ex.getMessage());
+        return AppResponse.invalid("Device not found", HttpStatus.NOT_FOUND,
                 Collections.singletonList(error)).getResponseEntity();
     }
 
