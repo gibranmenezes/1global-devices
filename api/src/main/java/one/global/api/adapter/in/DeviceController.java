@@ -18,7 +18,7 @@ public class DeviceController {
     private final DeviceUseCase deviceUseCase;
     private final DeviceMapper deviceMapper;
 
-    @PostMapping("/register")
+    @PostMapping("/create")
     public ResponseEntity<AppResponse<DeviceResponseDTO>> createDevice(@RequestBody DeviceRequestDTO deviceRequestDTO) {
         var device = deviceUseCase.createDevice(deviceRequestDTO.name(), deviceRequestDTO.brand());
         return AppResponse
@@ -85,10 +85,10 @@ public class DeviceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<AppResponse<Void>> deleteDevice(@PathVariable Long id) {
+    public ResponseEntity<AppResponse<Object>> deleteDevice(@PathVariable Long id) {
         deviceUseCase.deleteDevice(id);
 
-        return AppResponse.noContent("Device deleted successfully").getNoContentResponseEntity();
+        return AppResponse.deleted("Device deleted successfully").getResponseEntity();
     }
 
 }
