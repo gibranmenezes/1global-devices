@@ -14,10 +14,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/devices")
 @RequiredArgsConstructor
-public class DeviceController {
+public class DeviceController implements IDeviceController {
+
     private final DeviceUseCase deviceUseCase;
     private final DeviceMapper deviceMapper;
 
+
+    @Override
     @PostMapping("/create")
     public ResponseEntity<AppResponse<DeviceResponseDTO>> createDevice(@RequestBody DeviceRequestDTO deviceRequestDTO) {
         var device = deviceUseCase.createDevice(deviceRequestDTO.name(), deviceRequestDTO.brand());
@@ -26,13 +29,15 @@ public class DeviceController {
                 .getResponseEntity();
     }
 
+    @Override
     @GetMapping("/{id}")
-    public ResponseEntity<AppResponse<List<DeviceResponseDTO>>> getDevice(@PathVariable Long id) {
+    public ResponseEntity<AppResponse<DeviceResponseDTO>> getDevice(@PathVariable Long id) {
         Device device = deviceUseCase.getDeviceById(id);
         DeviceResponseDTO deviceResponseDTO = deviceMapper.fromDeviceToDeviceResponseDTO(device);
-        return AppResponse.ok("Device retrieved successfully", List.of(deviceResponseDTO)).getResponseEntity();
+        return AppResponse.ok("Device retrieved successfully",deviceResponseDTO).getResponseEntity();
     }
 
+    @Override
     @GetMapping
     public ResponseEntity<AppResponse<List<DeviceResponseDTO>>> getDevices(
             @RequestParam(required = false) String brand,
@@ -60,6 +65,8 @@ public class DeviceController {
         return finalAppResponse.getResponseEntity();
 
     }
+
+    @Override
     @PutMapping("/{id}")
     public ResponseEntity<AppResponse<DeviceResponseDTO>> updateDevice(@PathVariable Long id,
                                                                        @RequestBody DeviceUpdateDTO updateDTO) {
@@ -73,6 +80,7 @@ public class DeviceController {
 
     }
 
+    @Override
     @PatchMapping("/{id}")
     public ResponseEntity<AppResponse<DeviceResponseDTO>> partiallyUpdateDevice(@PathVariable Long id,
                                                                                  @RequestBody DeviceUpdateDTO patchDTO) {
