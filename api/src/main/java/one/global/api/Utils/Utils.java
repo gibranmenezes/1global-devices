@@ -1,4 +1,4 @@
-package one.global.api.domain.Utils;
+package one.global.api.Utils;
 
 import one.global.api.domain.enums.State;
 
@@ -16,4 +16,8 @@ public interface Utils {
    static boolean isUpdatingNameAndBrand(String name, String brand) {
        return isProvided(name) || isProvided(brand);
    }
+
+    static State getValidState(String state) {
+        return state != null && !state.isBlank() ? State.valueOf(state.toUpperCase()) : null;
+    }
 }
