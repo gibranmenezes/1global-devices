@@ -93,7 +93,10 @@ public class AppResponse<T> {
         return ResponseEntity.status(this.status).body(this);
     }
 
-    // Método para adicionar os parâmetros de paginação
+    public ResponseEntity<AppResponse<Void>> getNoContentResponseEntity() {
+        return ResponseEntity.status(this.status).build();
+    }
+
     @JsonIgnore
     public AppResponse<T> buildParametersPagination(int page, int size, long totalElements, int totalPages) {
         var pagination = new HashMap<String, Object>();
@@ -109,12 +112,12 @@ public class AppResponse<T> {
         return new AppResponse<>(HttpStatus.OK.value(), true, message, content, null, null);
     }
 
-    public static <T> AppResponse<T> accepted(String message, T content) {
-        return new AppResponse<>(HttpStatus.ACCEPTED.value(), true, message, content, null, null);
-    }
-
     public static <T> AppResponse<T> created(String message, T content) {
         return new AppResponse<>(HttpStatus.CREATED.value(), true, message, content, null, null);
+    }
+
+    public static <T> AppResponse<T> noContent(String message) {
+        return new AppResponse<>(HttpStatus.NO_CONTENT.value(), true, message, null,null, null);
     }
 
     public static <T> AppResponse<T> invalid(String message, HttpStatus httpStatus, String errorCode,
