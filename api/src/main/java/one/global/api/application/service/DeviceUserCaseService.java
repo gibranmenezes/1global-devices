@@ -2,7 +2,7 @@ package one.global.api.application.service;
 
 import one.global.api.application.port.in.DeviceUseCase;
 import one.global.api.application.port.out.DeviceRepository;
-import one.global.api.application.validation.registration.DeviceRegistrationValidator;
+import one.global.api.application.validation.creation.DeviceAttributesValidator;
 import one.global.api.Utils.Utils;
 import one.global.api.domain.enums.State;
 import one.global.api.domain.exception.DeviceNotFoundException;
@@ -14,9 +14,9 @@ import java.util.List;
 public class DeviceUserCaseService implements DeviceUseCase {
 
     private final DeviceRepository deviceRepository;
-    private final List<DeviceRegistrationValidator> createValidators;
+    private final List<DeviceAttributesValidator> createValidators;
 
-    public DeviceUserCaseService(DeviceRepository deviceRepository, List<DeviceRegistrationValidator> createValidators) {
+    public DeviceUserCaseService(DeviceRepository deviceRepository, List<DeviceAttributesValidator> createValidators) {
         this.deviceRepository = deviceRepository;
         this.createValidators = createValidators;
     }
@@ -46,6 +46,7 @@ public class DeviceUserCaseService implements DeviceUseCase {
     @Override
     public Device updateDevice(Long id, String name, String brand, State state) {
         Device device = getDeviceById(id);
+        createValidators.forEach(v -> v.validate(name, brand));
         device.updateDetails(name, brand);
         device.changeState(state);
         return deviceRepository.save(device);
