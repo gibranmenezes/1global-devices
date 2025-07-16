@@ -78,6 +78,72 @@ class DeviceControllerIntegrationTest {
     }
 
     @Test
+    @DisplayName("Should return IN_CONFLICT when creating device with empty name")
+    void shouldReturnInConflictWhenCreatingDeviceWithEmptyName() throws Exception {
+        DeviceRequestDTO requestDTO = new DeviceRequestDTO("", "BrandX");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/devices/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Error - verify parameter values"));
+    }
+
+    @Test
+    @DisplayName("Should return BAD_REQUEST when creating device with null name")
+    void shouldReturnBadRequestWhenCreatingDeviceWithNullName() throws Exception {
+        DeviceRequestDTO requestDTO = new DeviceRequestDTO(null, "BrandX");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/devices/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Name and brand must not be empty"));
+    }
+
+    @Test
+    @DisplayName("Should return IN_CONFLICT when creating device with empty brand")
+    void shouldReturnInConflictWhenCreatingDeviceWithEmptyBrand() throws Exception {
+        DeviceRequestDTO requestDTO = new DeviceRequestDTO("Test Device", "");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/devices/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Error - verify parameter values"));
+    }
+
+    @Test
+    @DisplayName("Should return IN_CONFLICT when creating device with null brand")
+    void shouldReturnInConflictWhenCreatingDeviceWithNullBrand() throws Exception {
+        DeviceRequestDTO requestDTO = new DeviceRequestDTO("Test Device", null);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/devices/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Error - verify parameter values"));
+    }
+
+    @Test
+    @DisplayName("Should return IN_CONFLICT when creating device with null name and null brand")
+    void shouldReturnInConflictWhenCreatingDeviceWithNullNameAndNullBrand() throws Exception {
+        DeviceRequestDTO requestDTO = new DeviceRequestDTO(null, null);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/devices/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Error - verify parameter values"));
+    }
+
+
+    @Test
     @DisplayName("Should retrieve a device by ID successfully")
     void shouldRetrieveDeviceByIdSuccessfully() throws Exception {
         DeviceRequestDTO createRequest = new DeviceRequestDTO("Device to Get", "BrandY");

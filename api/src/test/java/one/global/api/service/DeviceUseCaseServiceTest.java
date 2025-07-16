@@ -1,7 +1,6 @@
 package one.global.api.service;
 
-import one.global.api.application.validation.registration.NameBrandValidation;
-import one.global.api.domain.exception.CreateDeviceException;
+import one.global.api.application.validation.creation.NameBrandValidation;
 import one.global.api.domain.exception.InvalidDeviceParameter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import one.global.api.application.port.out.DeviceRepository;
 import one.global.api.application.service.DeviceUserCaseService;
-import one.global.api.application.validation.registration.DeviceRegistrationValidator;
+import one.global.api.application.validation.creation.DeviceAttributesValidator;
 import one.global.api.domain.enums.State;
 import one.global.api.domain.exception.DeviceInUseException;
 import one.global.api.domain.exception.DeviceNotFoundException;
@@ -34,7 +33,7 @@ class DeviceUseCaseServiceTest {
     private DeviceRepository deviceRepository;
 
     @Mock
-    private DeviceRegistrationValidator mockRegistrationValidator;
+    private DeviceAttributesValidator mockNameBrandValidator;
 
     @InjectMocks
     private DeviceUserCaseService deviceUserCaseService;
@@ -46,7 +45,7 @@ class DeviceUseCaseServiceTest {
 
     @BeforeEach
     void setUp() {
-        deviceUserCaseService = new DeviceUserCaseService(deviceRepository, Arrays.asList(mockRegistrationValidator));
+        deviceUserCaseService = new DeviceUserCaseService(deviceRepository, Arrays.asList(mockNameBrandValidator));
         testDevice = new Device("TestName", "TestBrand");
         testDevice.setId(1L);
     }
@@ -68,7 +67,7 @@ class DeviceUseCaseServiceTest {
         assertEquals(brand, result.getBrand());
         assertEquals(State.AVAILABLE, result.getState());
         verify(deviceRepository, times(1)).save(any(Device.class));
-        verify(mockRegistrationValidator, times(1)).validate(name, brand);
+        verify(mockNameBrandValidator, times(1)).validate(name, brand);
     }
 
     @Test
@@ -81,7 +80,7 @@ class DeviceUseCaseServiceTest {
     @NullAndEmptySource
     @DisplayName("Should throw exception when name is null or empty")
     void shouldThrowExceptionWhenNameIsNullOrEmpty(String invalidName) {
-        assertThrows(CreateDeviceException.class,
+        assertThrows(InvalidDeviceParameter.class,
                 () -> validator.validate(invalidName, "ValidBrand"),
                 "Name and brand must not be empty");
     }
@@ -90,7 +89,7 @@ class DeviceUseCaseServiceTest {
     @NullAndEmptySource
     @DisplayName("Should throw exception when brand is null or empty")
     void shouldThrowExceptionWhenBrandIsNullOrEmpty(String invalidBrand) {
-        assertThrows(CreateDeviceException.class,
+        assertThrows(InvalidDeviceParameter.class,
                 () -> validator.validate("ValidName", invalidBrand),
                 "Name and brand must not be empty");
     }
@@ -98,7 +97,7 @@ class DeviceUseCaseServiceTest {
     @Test
     @DisplayName("Should throw exception when both name and brand are null")
     void shouldThrowExceptionWhenBothNameAndBrandAreNull() {
-        assertThrows(CreateDeviceException.class,
+        assertThrows(InvalidDeviceParameter.class,
                 () -> validator.validate(null, null),
                 "Name and brand must not be empty");
     }
@@ -163,18 +162,79 @@ class DeviceUseCaseServiceTest {
         verify(deviceRepository, never()).save(any(Device.class));
     }
 
+    @ParameterizedTest
+    @NullAndEmptySource
+    @DisplayName("Update device should throw InvalidDeviceParameter when name is null or empty (via NameBrandValidation)")
+    void updateDevice_shouldThrowInvalidDeviceParameter_whenNameIsNullOrEmptyViaValidation(String invalidName) {
+        Long id = 1L;
+        String validBrand = "ValidBrand";
+        State newState = State.AVAILABLE;
+
+        when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+
+        doThrow(new InvalidDeviceParameter("Name and brand must not be empty"))
+                .when(mockNameBrandValidator).validate(eq(invalidName), eq(validBrand));
+
+        assertThrows(InvalidDeviceParameter.class,
+                () -> deviceUserCaseService.updateDevice(id, invalidName, validBrand, newState));
+
+        verify(mockNameBrandValidator, times(1)).validate(eq(invalidName), eq(validBrand));
+        verify(deviceRepository, never()).save(any(Device.class));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @DisplayName("Update device should throw InvalidDeviceParameter when brand is null or empty (via NameBrandValidation)")
+    void updateDevice_shouldThrowInvalidDeviceParameter_whenBrandIsNullOrEmptyViaValidation(String invalidBrand) {
+        Long id = 1L;
+        String validName = "ValidName";
+        State newState = State.AVAILABLE;
+
+        when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+
+        doThrow(new InvalidDeviceParameter("Name and brand must not be empty"))
+                .when(mockNameBrandValidator).validate(eq(validName), eq(invalidBrand));
+
+        assertThrows(InvalidDeviceParameter.class,
+                () -> deviceUserCaseService.updateDevice(id, validName, invalidBrand, newState));
+
+        verify(mockNameBrandValidator, times(1)).validate(eq(validName), eq(invalidBrand));
+        verify(deviceRepository, never()).save(any(Device.class));
+    }
+
+    @Test
+    @DisplayName("Update device should throw InvalidDeviceParameter when both name and brand are null (via NameBrandValidation)")
+    void updateDevice_shouldThrowInvalidDeviceParameter_whenBothNameAndBrandAreNullViaValidation() {
+        Long id = 1L;
+        State newState = State.AVAILABLE;
+
+        when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+
+        doThrow(new InvalidDeviceParameter("Name and brand must not be empty"))
+                .when(mockNameBrandValidator).validate(eq(null), eq(null));
+
+        assertThrows(InvalidDeviceParameter.class,
+                () -> deviceUserCaseService.updateDevice(id, null, null, newState));
+
+        verify(mockNameBrandValidator, times(1)).validate(null, null);
+        verify(deviceRepository, never()).save(any(Device.class));
+    }
+
+
     @Test
     @DisplayName("Update device should throw exception when state is null")
     void updateDevice_shouldThrowException_whenStateIsNull() {
         Long id = 1L;
         String newName = "UpdatedName";
         String newBrand = "UpdatedBrand";
-        State nullState = null;
+
         when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
 
-        assertThrows(InvalidDeviceParameter.class, () -> deviceUserCaseService.updateDevice(id, newName, newBrand, nullState));
+        assertThrows(InvalidDeviceParameter.class, () -> deviceUserCaseService.updateDevice(id, newName, newBrand, null));
         verify(deviceRepository, never()).save(any(Device.class));
     }
+
+
 
     @Test
     @DisplayName("Partially update device should update name and brand when provided and device not in use")
@@ -182,13 +242,12 @@ class DeviceUseCaseServiceTest {
         Long id = 1L;
         String newName = "PartialName";
         String newBrand = "PartialBrand";
-        State state = null;
 
         try (var mockedStatic = mockStatic(Utils.class)) {
             mockedStatic.when(() -> Utils.isUpdatingNameAndBrand(newName, newBrand)).thenReturn(true);
             when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
 
-            deviceUserCaseService.partiallyUpdateDevice(id, newName, newBrand, state);
+            deviceUserCaseService.partiallyUpdateDevice(id, newName, newBrand, null);
 
             assertEquals(newName, testDevice.getName());
             assertEquals(newBrand, testDevice.getBrand());
@@ -201,17 +260,16 @@ class DeviceUseCaseServiceTest {
     @DisplayName("Partially update device should update state when provided and different")
     void partiallyUpdateDevice_shouldUpdateState_whenProvidedAndDifferent() {
         Long id = 1L;
-        String name = null;
-        String brand = null;
+
         State newState = State.INACTIVE;
         testDevice.changeState(State.AVAILABLE);
 
 
         try (var mockedStatic = mockStatic(Utils.class)) {
-            mockedStatic.when(() -> Utils.isUpdatingNameAndBrand(name, brand)).thenReturn(false);
+            mockedStatic.when(() -> Utils.isUpdatingNameAndBrand(null, null)).thenReturn(false);
             when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
 
-            deviceUserCaseService.partiallyUpdateDevice(id, name, brand, newState);
+            deviceUserCaseService.partiallyUpdateDevice(id, null, null, newState);
 
             assertEquals(newState, testDevice.getState());
             verify(deviceRepository, times(1)).save(testDevice);
@@ -222,18 +280,15 @@ class DeviceUseCaseServiceTest {
     @DisplayName("Partially update device should not update anything when no relevant params provided")
     void partiallyUpdateDevice_shouldNotUpdateAnything_whenNoRelevantParamsProvided() {
         Long id = 1L;
-        String name = null;
-        String brand = null;
-        State state = null;
         String originalName = testDevice.getName();
         String originalBrand = testDevice.getBrand();
         State originalState = testDevice.getState();
 
         try (var mockedStatic = mockStatic(Utils.class)) {
-            mockedStatic.when(() -> Utils.isUpdatingNameAndBrand(name, brand)).thenReturn(false);
+            mockedStatic.when(() -> Utils.isUpdatingNameAndBrand(null, null)).thenReturn(false);
             when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
 
-            deviceUserCaseService.partiallyUpdateDevice(id, name, brand, state);
+            deviceUserCaseService.partiallyUpdateDevice(id, null, null, null);
 
             assertEquals(originalName, testDevice.getName());
             assertEquals(originalBrand, testDevice.getBrand());
@@ -249,13 +304,12 @@ class DeviceUseCaseServiceTest {
         Long id = 1L;
         String newName = "PartialName";
         String newBrand = "PartialBrand";
-        State state = null;
 
         try (var mockedStatic = mockStatic(Utils.class)) {
             mockedStatic.when(() -> Utils.isUpdatingNameAndBrand(newName, newBrand)).thenReturn(true);
             when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
 
-            assertThrows(DeviceInUseException.class, () -> deviceUserCaseService.partiallyUpdateDevice(id, newName, newBrand, state));
+            assertThrows(DeviceInUseException.class, () -> deviceUserCaseService.partiallyUpdateDevice(id, newName, newBrand, null));
             verify(deviceRepository, never()).save(any(Device.class));
         }
     }
