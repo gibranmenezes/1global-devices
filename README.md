@@ -1,93 +1,110 @@
-# Devices API
+# 📱 Devices API - 1GLOBAL Challenge
 
-## Overview
+![Java](https://img.shields.io/badge/Java-21+-blue?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-green?logo=spring)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?logo=postgresql)
+![Docker](https://img.shields.io/badge/Docker-Compose-blue?logo=docker)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[cite_start]This project implements a RESTful API for device management, as per the 1GLOBAL challenge specifications[cite: 1]. The API allows for the persistence and manipulation of device resources, including functionalities for creation, retrieval, updating (full and partial), and deletion.
+## 🌟 Overview
 
-## Architectural Pattern
+This project implements a RESTful API for device resources management, as per the [1GLOBAL challenge specifications](https://github.com/1GLOBAL-HRM/challenge). The API provides comprehensive CRUD operations for device resources with advanced filtering capabilities.
 
-The application adheres to a **Port and Adapters Architecture** pattern, with a clear separation of concerns. It also incorporates principles from **Clean Architecture / Hexagonal Architecture** through the adoption of Ports and Adapters. This promotes dependency inversion and facilitates testability and maintainability, ensuring the core business logic remains independent of infrastructure technologies (like databases and web frameworks).
+```mermaid
+        graph TD
+            A[Client] --> B[API Endpoints]
+            B --> C[Business Logic]
+            C --> D[Persistence]
+            D --> E[PostgreSQL] 
+```
+##  🏗️  Architectural Pattern
+Clean Architecture with Ports & Adapters
 
-* **`adapter.in` (Controllers):** The entry layer, responsible for receiving HTTP requests and translating them into calls to the application layer.
-* **`application.port.in` (Use Cases):** Defines the interfaces for the use cases, representing the core business logic.
-* **`application.service` (Use Case Implementations):** Implements the use cases defined by the inbound ports.
-* **`application.port.out` (Repositories):** Defines the interfaces for the outbound ports for communication with infrastructure.
-* **`adapter.out.persistence` (Adapters/Repositories):** Implements the outbound ports, adapting the business logic to the persistence technology (JPA/Hibernate).
-* **`domain` (Core Business Logic):** Contains the core domain entities, enums, and essential business rules.
 
-## Supported Functionalities
+![img.png](images/img.png)
 
-The API offers the following capabilities for device management:
+## 🚀 Features
 
-* **Create** a new device.
-* **Fully and/or partially update** an existing device. 
-* **Fetch** a single device by ID.
-* **Fetch** all devices with pagination support.
-* **Filter** devices by brand.
-* **Filter** devices by state.
-* **Delete** a single device.
+## 📋 Core Operations
 
-## Domain Validations
+- ### ✅ Create new devices
 
-The following business rules are enforced:
+- ### 🔍 Retrieve devices (single or paginated list)
 
-* **Creation time** cannot be updated.
-* **Name and brand** properties cannot be updated if the device is `IN_USE`. 
-* **Devices in the **`IN_USE` state cannot be deleted**. 
-* A newly created device is always initialized with the **`AVAILABLE` state**. 
-* State changes must be made explicitly through the update functionality.
+- ### ✏️ Full & partial updates
 
-## Technologies Used
+- ### 🗑️ Delete devices (with state validation)
 
-* **Java 21+** 
-* **Spring Boot 3.x:** 
-* **Maven 3.9+:**
-* **Spring Data JPA / Hibernate:**
-* **PostgreSQL:**
-* **Flyway:**
-* **Docker / Docker Compose:** 
-* **JUnit 5, Mockito, Spring Boot Test, Testcontainers:** 
-* **Swagger (SpringDoc OpenAPI):** 
+## 🔎 Advanced Filtering
 
-## How to Run the Project
+- ### 🔧 Filter by brand (/devices?brand=Apple)
 
-To run the application locally using Docker Compose, follow these steps:
+- ### 🏷️ Filter by state (/devices?state=AVAILABLE)
 
+- ### 📄 Pagination support (/devices?page=0&size=10)
+
+## 🛡️ Business Rules
+
+- ### 📅 Device state validation on updates
+  - Devices can only be deleted if they are not in the IN_USE state.
+  - Devices' name or brand can only be updated if the device are not in the IN_USE state.
+  - Device totally updated is possible for any state, however, name and brand parameter cannot be null or empty.
+  - To create a new device, the name and brand parameters cannot be null or empty.
+
+## 🛠️ Tech Stack
+
+![img.png](images/stack.png)
+
+# 🚀 Quick Start
 ### Prerequisites
 
-* Docker Desktop (or Docker Engine and Docker Compose) installed.
-* Java 21+ installed.
+- ### 🐳 Docker Desktop (or Docker Engine + Compose)
 
-### Steps
+- ### ☕ Java 21+ JDK
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/gibranmenezes/1global-devices.git
-    cd one-global-api 
-    ```
+## Running with Docker Compose
 
-2.  **Build the Maven project:**
-    Navigate to the project's root directory and execute the docker compose command to run the containers.
-    ```bash
-     docker-compose up -d
-    ```
+## 1. Clone the repository
 
-3.  **Verify if all containers are running:**
-    ```bash
-    docker ps
-    ```
-   
+### git clone https://github.com/gibranmenezes/1global-devices.git
+### cd one-global-api
 
-4.  **Access the application:**
+## 2. Start the system
+### docker-compose up -d
 
-    | Service | URL | Description |
-    | --- | --- | --- |
-    | API | http://localhost:8080/global-api | API REST Java/Spring Boot |
-    | Swagger  UI | http://localhost:8080/global-api/swagger-ui/index.html | API Documentation |
-    | Admine |http://localhost:8081 |Database GUI |
+## 3. Verify containers
+### docker ps -a
 
-5.  **Stop applications:**
-    To stop the application, run:
-    ```bash
-    docker-compose down
-    ```
+
+# 4. Access services:
+
+
+| Service             | 	       URL                                            |  
+|---------------------|--------------------------------------------------------|
+| API	                | http://localhost:8080/global-api                       |
+|---------------------| --------------------------------------------------     |
+| Swagger UI	     | http://localhost:8080/global-api/swagger-ui.html       |
+|---------------------| --------------------------------------------------     |
+| Adminer (DB UI) | 	     http://localhost:8081                            |
+|---------------------| --------------------------------------------------     |
+
+
+## 5. Stop containers
+### docker-compose down
+
+## 🤝 Contributing
+
+1. Fork the project
+
+2. Create your feature branch (git checkout -b feature/amazing-feature)
+
+3. Commit your changes (git commit -m 'Add some amazing feature')
+
+4. Push to the branch (git push origin feature/amazing-feature)
+
+5. Open a Pull Request
+
+## 📄 License
+Distributed under the MIT License. See LICENSE for more information.
+
+
