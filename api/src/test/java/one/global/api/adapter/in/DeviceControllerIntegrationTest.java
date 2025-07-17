@@ -100,7 +100,7 @@ class DeviceControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("Name and brand must not be empty"));
+                .andExpect(jsonPath("$.message").value("Error - verify parameter values"));
     }
 
     @Test
