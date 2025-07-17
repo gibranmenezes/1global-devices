@@ -1,4 +1,4 @@
-package one.global.api.application.validation.creation;
+package one.global.api.application.validation;
 
 import one.global.api.domain.exception.InvalidDeviceParameter;
 

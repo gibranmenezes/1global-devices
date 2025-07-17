@@ -1,6 +1,6 @@
 package one.global.api.service;
 
-import one.global.api.application.validation.creation.NameBrandValidation;
+import one.global.api.application.validation.NameBrandValidation;
 import one.global.api.domain.exception.InvalidDeviceParameter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import one.global.api.application.port.out.DeviceRepository;
 import one.global.api.application.service.DeviceUserCaseService;
-import one.global.api.application.validation.creation.DeviceAttributesValidator;
+import one.global.api.application.validation.DeviceAttributesValidator;
 import one.global.api.domain.enums.State;
 import one.global.api.domain.exception.DeviceInUseException;
 import one.global.api.domain.exception.DeviceNotFoundException;

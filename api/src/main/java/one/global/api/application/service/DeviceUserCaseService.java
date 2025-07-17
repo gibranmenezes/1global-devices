@@ -2,7 +2,7 @@ package one.global.api.application.service;
 
 import one.global.api.application.port.in.DeviceUseCase;
 import one.global.api.application.port.out.DeviceRepository;
-import one.global.api.application.validation.creation.DeviceAttributesValidator;
+import one.global.api.application.validation.DeviceAttributesValidator;
 import one.global.api.Utils.Utils;
 import one.global.api.domain.enums.State;
 import one.global.api.domain.exception.DeviceNotFoundException;
