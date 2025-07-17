@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -31,9 +32,9 @@ public class DeviceRespositoryAdapter implements DeviceRepository {
     }
 
     @Override
-    public Device findById(Long id) {
+    public Optional<Device> findById(Long id) {
         var optionalEntity = jpaDeviceRepository.findById(id);
-        return optionalEntity.map(deviceMapper::fromJpaDeviceEntityToDevice).orElse(null);
+        return optionalEntity.map(deviceMapper::fromJpaDeviceEntityToDevice);
     }
 
     @Override
