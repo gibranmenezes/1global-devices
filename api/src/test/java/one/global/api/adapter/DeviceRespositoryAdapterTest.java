@@ -89,7 +89,9 @@ class DeviceRespositoryAdapterTest {
         when(jpaDeviceRepository.findById(deviceId)).thenReturn(Optional.of(foundJpaEntity));
         when(deviceMapper.fromJpaDeviceEntityToDevice(foundJpaEntity)).thenReturn(expectedDevice);
 
-        Device result = deviceRespositoryAdapter.findById(deviceId);
+        var resultOptional = deviceRespositoryAdapter.findById(deviceId);
+        assertTrue(resultOptional.isPresent(), "Device found.");
+        var result = resultOptional.get();
 
         assertNotNull(result);
         assertEquals(expectedDevice.getId(), result.getId());
@@ -109,7 +111,7 @@ class DeviceRespositoryAdapterTest {
 
         when(jpaDeviceRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-        Device result = deviceRespositoryAdapter.findById(nonExistentId);
+        Device result = deviceRespositoryAdapter.findById(nonExistentId).orElse(null);
 
         assertNull(result);
 

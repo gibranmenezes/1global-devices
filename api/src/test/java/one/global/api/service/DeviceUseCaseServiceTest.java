@@ -13,13 +13,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import one.global.api.application.port.out.DeviceRepository;
 import one.global.api.application.service.DeviceUserCaseService;
-import one.global.api.application.validation.DeviceAttributesValidator;
+import one.global.api.application.validation.DeviceParamsValidator;
 import one.global.api.domain.enums.State;
 import one.global.api.domain.exception.DeviceInUseException;
 import one.global.api.domain.exception.DeviceNotFoundException;
 import one.global.api.domain.model.Device;
 import one.global.api.Utils.Utils;
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,7 +34,7 @@ class DeviceUseCaseServiceTest {
     private DeviceRepository deviceRepository;
 
     @Mock
-    private DeviceAttributesValidator mockNameBrandValidator;
+    private DeviceParamsValidator mockNameBrandValidator;
 
     @InjectMocks
     private DeviceUserCaseService deviceUserCaseService;
@@ -106,7 +107,7 @@ class DeviceUseCaseServiceTest {
     @DisplayName("Get device by ID should return device when found")
     void getDeviceById_shouldReturnDevice_whenFound() {
         Long id = 1L;
-        when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+        when(deviceRepository.findById(anyLong())).thenReturn(Optional.of(testDevice));
         Device result = deviceUserCaseService.getDeviceById(id);
 
 
@@ -119,7 +120,7 @@ class DeviceUseCaseServiceTest {
     @DisplayName("Get device by ID should throw exception when not found")
     void getDeviceById_shouldThrowDeviceNotFoundException_whenNotFound() {
         Long nonExistentId = 99L;
-        when(deviceRepository.findById(nonExistentId)).thenReturn(null);
+        when(deviceRepository.findById(nonExistentId)).thenReturn(Optional.empty());
         assertThrows(DeviceNotFoundException.class, () -> deviceUserCaseService.getDeviceById(nonExistentId));
     }
 
@@ -131,7 +132,7 @@ class DeviceUseCaseServiceTest {
         String newBrand = "UpdatedBrand";
         State newState = State.INACTIVE;
 
-        when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+        when(deviceRepository.findById(anyLong())).thenReturn(Optional.of(testDevice));
         when(deviceRepository.save(any(Device.class))).thenReturn(testDevice);
 
 
@@ -151,7 +152,7 @@ class DeviceUseCaseServiceTest {
         inUseDevice.setId(id);
         inUseDevice.changeState(State.IN_USE);
 
-        when(deviceRepository.findById(id)).thenReturn(inUseDevice);
+        when(deviceRepository.findById(id)).thenReturn(Optional.of(inUseDevice));
 
         String newName = "UpdatedName";
         String newBrand = "TestBrand";
@@ -170,7 +171,7 @@ class DeviceUseCaseServiceTest {
         String validBrand = "ValidBrand";
         State newState = State.AVAILABLE;
 
-        when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+        when(deviceRepository.findById(anyLong())).thenReturn(Optional.of(testDevice));
 
         doThrow(new InvalidDeviceParameter("Name and brand must not be empty"))
                 .when(mockNameBrandValidator).validate(eq(invalidName), eq(validBrand));
@@ -190,7 +191,7 @@ class DeviceUseCaseServiceTest {
         String validName = "ValidName";
         State newState = State.AVAILABLE;
 
-        when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+        when(deviceRepository.findById(anyLong())).thenReturn(Optional.of(testDevice));
 
         doThrow(new InvalidDeviceParameter("Name and brand must not be empty"))
                 .when(mockNameBrandValidator).validate(eq(validName), eq(invalidBrand));
@@ -208,7 +209,7 @@ class DeviceUseCaseServiceTest {
         Long id = 1L;
         State newState = State.AVAILABLE;
 
-        when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+        when(deviceRepository.findById(anyLong())).thenReturn(Optional.of(testDevice));
 
         doThrow(new InvalidDeviceParameter("Name and brand must not be empty"))
                 .when(mockNameBrandValidator).validate(eq(null), eq(null));
@@ -228,7 +229,7 @@ class DeviceUseCaseServiceTest {
         String newName = "UpdatedName";
         String newBrand = "UpdatedBrand";
 
-        when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+        when(deviceRepository.findById(anyLong())).thenReturn(Optional.of(testDevice));
 
         assertThrows(InvalidDeviceParameter.class, () -> deviceUserCaseService.updateDevice(id, newName, newBrand, null));
         verify(deviceRepository, never()).save(any(Device.class));
@@ -245,7 +246,7 @@ class DeviceUseCaseServiceTest {
 
         try (var mockedStatic = mockStatic(Utils.class)) {
             mockedStatic.when(() -> Utils.isUpdatingNameAndBrand(newName, newBrand)).thenReturn(true);
-            when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+            when(deviceRepository.findById(anyLong())).thenReturn(Optional.of(testDevice));
 
             deviceUserCaseService.partiallyUpdateDevice(id, newName, newBrand, null);
 
@@ -267,7 +268,7 @@ class DeviceUseCaseServiceTest {
 
         try (var mockedStatic = mockStatic(Utils.class)) {
             mockedStatic.when(() -> Utils.isUpdatingNameAndBrand(null, null)).thenReturn(false);
-            when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+            when(deviceRepository.findById(anyLong())).thenReturn(Optional.of(testDevice));
 
             deviceUserCaseService.partiallyUpdateDevice(id, null, null, newState);
 
@@ -286,7 +287,7 @@ class DeviceUseCaseServiceTest {
 
         try (var mockedStatic = mockStatic(Utils.class)) {
             mockedStatic.when(() -> Utils.isUpdatingNameAndBrand(null, null)).thenReturn(false);
-            when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+            when(deviceRepository.findById(anyLong())).thenReturn(Optional.of(testDevice));
 
             deviceUserCaseService.partiallyUpdateDevice(id, null, null, null);
 
@@ -307,7 +308,7 @@ class DeviceUseCaseServiceTest {
 
         try (var mockedStatic = mockStatic(Utils.class)) {
             mockedStatic.when(() -> Utils.isUpdatingNameAndBrand(newName, newBrand)).thenReturn(true);
-            when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+            when(deviceRepository.findById(anyLong())).thenReturn(Optional.of(testDevice));
 
             assertThrows(DeviceInUseException.class, () -> deviceUserCaseService.partiallyUpdateDevice(id, newName, newBrand, null));
             verify(deviceRepository, never()).save(any(Device.class));
@@ -319,7 +320,7 @@ class DeviceUseCaseServiceTest {
     void deleteDevice_shouldDeleteDevice_whenNotIN_USE() {
         Long id = 1L;
         testDevice.changeState(State.AVAILABLE);
-        when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+        when(deviceRepository.findById(anyLong())).thenReturn(Optional.of(testDevice));
 
 
         deviceUserCaseService.deleteDevice(id);
@@ -332,7 +333,7 @@ class DeviceUseCaseServiceTest {
     void deleteDevice_shouldThrowException_whenDeviceIN_USE() {
         Long id = 1L;
         testDevice.changeState(State.IN_USE);
-        when(deviceRepository.findById(anyLong())).thenReturn(testDevice);
+        when(deviceRepository.findById(anyLong())).thenReturn(Optional.of(testDevice));
 
         assertThrows(DeviceInUseException.class, () -> deviceUserCaseService.deleteDevice(id));
         verify(deviceRepository, never()).delete(anyLong());
