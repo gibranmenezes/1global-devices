@@ -6,7 +6,7 @@ import one.global.api.domain.enums.State;
 public interface Utils {
 
     static boolean isProvided(String param) {
-        return param != null && !param.isEmpty();
+        return param != null && !param.isBlank();
     }
 
     static String getNameFromState(State state) {
